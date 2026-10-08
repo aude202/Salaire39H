@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#0f172a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Salaire 39H">
+  <link rel="manifest" href="manifest.webmanifest">
+  <title>Simulateur Salaire 39H</title>
+  <style>
+    :root{font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;color:#0f172a;background:#f1f5f9}
+    *{box-sizing:border-box} body{margin:0}
+    .app{max-width:520px;margin:auto;min-height:100vh;padding:18px 16px 32px}
+    header{padding:10px 4px 18px}.eyebrow{font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#64748b}
+    h1{font-size:28px;line-height:1.1;margin:6px 0}.sub{color:#64748b;margin:0}
+    .card{background:#fff;border-radius:20px;padding:18px;margin:12px 0;box-shadow:0 5px 20px #0f172a12}
+    .section-title{font-size:15px;font-weight:800;margin:0 0 14px}
+    label{display:block;font-size:13px;font-weight:700;color:#475569;margin:12px 0 7px}
+    input,select{width:100%;font:inherit;font-size:17px;padding:13px 14px;border:1px solid #cbd5e1;border-radius:12px;background:#fff}
+    input:focus,select:focus{outline:3px solid #cbd5e155;border-color:#64748b}
+    .hero{background:#0f172a;color:#fff;text-align:center}
+    .hero .label{font-size:13px;color:#cbd5e1}.rate{font-size:40px;font-weight:900;margin:6px 0}.legal{font-size:14px}
+    .ok{color:#86efac}.bad{color:#fca5a5}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.metric{background:#f8fafc;border-radius:14px;padding:12px}
+    .metric .k{font-size:12px;color:#64748b}.metric .v{font-size:18px;font-weight:800;margin-top:4px}
+    details summary{cursor:pointer;font-weight:800;color:#334155}
+    .row{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid #e2e8f0;font-size:14px}
+    .row:last-child{border-bottom:0}.muted{color:#64748b}
+    button{width:100%;border:0;border-radius:12px;padding:14px;font:inherit;font-weight:800;background:#e2e8f0;color:#0f172a}
+    .small{font-size:12px;color:#64748b;line-height:1.45}
+    footer{text-align:center;padding:10px;color:#94a3b8;font-size:11px}
+  </style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="eyebrow">Mini application mobile</div>
+    <h1>Simulateur Salaire 39H</h1>
+    <p class="sub">Vérification du taux horaire brut reconstitué</p>
+  </header>
+
+  <section class="card">
+    <div class="section-title">Données à saisir</div>
+    <label for="net">Salaire net mensuel négocié (€)</label>
+    <input id="net" type="number" inputmode="decimal" step="0.01" value="1900">
+    <label for="mutuelle">Option mutuelle</label>
+    <select id="mutuelle">
+      <option value="0.0135">Sans conjoint</option>
+      <option value="0.027">Avec conjoint</option>
+    </select>
+  </section>
+
+  <section class="card hero">
+    <div class="label">TAUX HORAIRE BRUT RECONSTITUÉ</div>
+    <div class="rate" id="rate">—</div>
+    <div class="legal" id="status">—</div>
+  </section>
+
+  <section class="card">
+    <div class="section-title">Résultats</div>
+    <div class="grid">
+      <div class="metric"><div class="k">Brut de base</div><div class="v" id="base">—</div></div>
+      <div class="metric"><div class="k">Heures sup. brutes</div><div class="v" id="hs">—</div></div>
+      <div class="metric"><div class="k">Mutuelle déduite</div><div class="v" id="mut">—</div></div>
+      <div class="metric"><div class="k">Brut mensuel global</div><div class="v" id="gross">—</div></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <details>
+      <summary>Paramètres du calcul</summary>
+      <label for="smic">Taux horaire brut minimum légal (€)</label>
+      <input id="smic" type="number" step="0.01" value="12.31">
+      <label for="normal">Heures normales mensuelles</label>
+      <input id="normal" type="number" step="0.01" value="151.67">
+      <label for="sup">Heures supplémentaires mensuelles</label>
+      <input id="sup" type="number" step="0.01" value="17.33">
+      <label for="majoration">Majoration heures supplémentaires</label>
+      <input id="majoration" type="number" step="0.01" value="0.25">
+      <label for="paniers">Nombre de paniers repas par mois</label>
+      <input id="paniers" type="number" step="1" value="22">
+      <label for="panier">Valeur unitaire d'un panier (€)</label>
+      <input id="panier" type="number" step="0.01" value="10.30">
+      <label for="charges">Taux de charges salariales moyen estimé</label>
+      <input id="charges" type="number" step="0.01" value="0.22">
+    </details>
+  </section>
+
+  <section class="card">
+    <div class="section-title">Détail du calcul</div>
+    <div class="row"><span class="muted">Paniers repas déduits</span><strong id="meal">—</strong></div>
+    <div class="row"><span class="muted">Heures équivalentes totales</span><strong id="hours">—</strong></div>
+    <div class="row"><span class="muted">Taux mutuelle</span><strong id="mutrate">—</strong></div>
+  </section>
+
+  <section class="card">
+    <button id="reset">Réinitialiser les paramètres</button>
+    <p class="small">Cette application reprend les formules du fichier Excel fourni. Les paramètres légaux et sociaux doivent être vérifiés avant utilisation professionnelle.</p>
+  </section>
+  <footer>Simulateur Salaire 39H • fonctionne hors connexion après installation</footer>
+</div>
+
+<script>
+const ids=["net","mutuelle","smic","normal","sup","majoration","paniers","panier","charges"];
+const $=id=>document.getElementById(id);
+const euro=x=>Number.isFinite(x)?x.toLocaleString("fr-FR",{minimumFractionDigits:2,maximumFractionDigits:2})+" €":"—";
+const num=id=>parseFloat($(id).value)||0;
+
+function calc(){
+  const net=num("net"), smic=num("smic"), normal=num("normal"), sup=num("sup");
+  const maj=num("majoration"), paniers=num("paniers"), panier=num("panier");
+  const charges=num("charges"), mut=num("mutuelle");
+  const meals=paniers*panier;
+  const hours=normal+(sup*(1+maj));
+  const denom=(hours*(1-charges))-(mut*normal);
+  const rate=denom ? (net-meals)/denom : NaN;
+  const base=rate*normal;
+  const mutamt=base*mut;
+  const hs=rate*sup*(1+maj);
+  const gross=base+hs;
+
+  $("rate").textContent=euro(rate);
+  const compliant=rate>=smic;
+  $("status").textContent=compliant?"🟢 CONFORME":"🔴 ALERTE : SOUS LE SMIC HORAIRE";
+  $("status").className="legal "+(compliant?"ok":"bad");
+  $("base").textContent=euro(base); $("hs").textContent=euro(hs);
+  $("mut").textContent=euro(mutamt); $("gross").textContent=euro(gross);
+  $("meal").textContent=euro(meals); $("hours").textContent=hours.toLocaleString("fr-FR",{maximumFractionDigits:2})+" h";
+  $("mutrate").textContent=(mut*100).toLocaleString("fr-FR",{minimumFractionDigits:2,maximumFractionDigits:2})+" %";
+  localStorage.setItem("salaire39h",JSON.stringify(Object.fromEntries(ids.map(id=>[id,$(id).value]))));
+}
+ids.forEach(id=>$(id).addEventListener("input",calc));
+const saved=localStorage.getItem("salaire39h");
+if(saved){try{const o=JSON.parse(saved);ids.forEach(id=>{if(o[id]!=null)$(id).value=o[id]})}catch(e){}}
+$("reset").addEventListener("click",()=>{localStorage.removeItem("salaire39h");location.reload()});
+calc();
+if("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js");
+</script>
+</body>
+</html>

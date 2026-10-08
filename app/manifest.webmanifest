@@ -1,0 +1,11 @@
+{
+  "name": "Simulateur Salaire 39H",
+  "short_name": "Salaire 39H",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f1f5f9",
+  "theme_color": "#0f172a",
+  "lang": "fr-FR",
+  "description": "Simulateur mobile basé sur le tableau Excel de vérification du salaire horaire 39H.",
+  "icons": []
+}
